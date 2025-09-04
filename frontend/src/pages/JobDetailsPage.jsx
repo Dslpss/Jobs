@@ -1,31 +1,68 @@
-import React, { useState } from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
-import Header from '../components/Header';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { useToast } from '../hooks/use-toast';
-import { mockJobs } from '../mock';
-import { 
-  MapPin, Calendar, Users, Briefcase, Clock, CheckCircle, 
-  Building, ArrowLeft, Mail, Phone, User, FileText 
-} from 'lucide-react';
+import React, { useState } from "react";
+import { useParams, Link, Navigate } from "react-router-dom";
+import Header from "../components/Header";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import { useToast } from "../hooks/use-toast";
+import {
+  MapPin,
+  Calendar,
+  Users,
+  Briefcase,
+  Clock,
+  CheckCircle,
+  Building,
+  ArrowLeft,
+  Mail,
+  Phone,
+  User,
+  FileText,
+} from "lucide-react";
+
+// Mock job data local para esta página
+const mockJobs = [
+  {
+    id: 1,
+    title: "Desenvolvedor Frontend React",
+    company: "Tech Company",
+    location: "São Paulo, SP",
+    type: "CLT",
+    level: "Pleno",
+    salary: "R$ 8.000 - R$ 12.000",
+    description: "Vaga para desenvolvedor React com experiência...",
+    requirements: ["React", "JavaScript", "TypeScript"],
+    benefits: ["Vale refeição", "Plano de saúde", "Home office"],
+    createdAt: "2024-01-15",
+  },
+];
 
 const JobDetailsPage = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const [isApplying, setIsApplying] = useState(false);
   const [applicationData, setApplicationData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    coverLetter: ''
+    name: "",
+    email: "",
+    phone: "",
+    coverLetter: "",
   });
 
-  const job = mockJobs.find(j => j.id === id);
+  const job = mockJobs.find((j) => j.id === id);
 
   if (!job) {
     return <Navigate to="/" replace />;
@@ -33,24 +70,32 @@ const JobDetailsPage = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
+    return date.toLocaleDateString("pt-BR");
   };
 
   const getModalityColor = (modality) => {
     switch (modality) {
-      case 'Remoto': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'Presencial': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'Híbrido': return 'bg-teal-100 text-teal-800 border-teal-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "Remoto":
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "Presencial":
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case "Híbrido":
+        return "bg-teal-100 text-teal-800 border-teal-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getLevelColor = (level) => {
     switch (level) {
-      case 'Junior': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Pleno': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Senior': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "Junior":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "Pleno":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "Senior":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -62,24 +107,28 @@ const JobDetailsPage = () => {
     setTimeout(() => {
       toast({
         title: "Candidatura enviada!",
-        description: "Sua candidatura foi enviada com sucesso. A empresa entrará em contato em breve.",
+        description:
+          "Sua candidatura foi enviada com sucesso. A empresa entrará em contato em breve.",
       });
       setIsApplying(false);
-      setApplicationData({ name: '', email: '', phone: '', coverLetter: '' });
+      setApplicationData({ name: "", email: "", phone: "", coverLetter: "" });
     }, 1500);
   };
 
   const handleInputChange = (field, value) => {
-    setApplicationData(prev => ({ ...prev, [field]: value }));
+    setApplicationData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <div className="min-h-screen">
       <Header />
-      
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
-        <Link to="/" className="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-6 group">
+        <Link
+          to="/"
+          className="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-6 group"
+        >
           <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
           Voltar às vagas
         </Link>
@@ -91,21 +140,26 @@ const JobDetailsPage = () => {
             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader className="pb-4">
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge className={`${getModalityColor(job.modality)} font-medium`}>
+                  <Badge
+                    className={`${getModalityColor(job.modality)} font-medium`}
+                  >
                     {job.modality}
                   </Badge>
                   <Badge className={`${getLevelColor(job.level)} font-medium`}>
                     {job.level}
                   </Badge>
-                  <Badge variant="outline" className="bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200">
+                  <Badge
+                    variant="outline"
+                    className="bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200"
+                  >
                     {job.type}
                   </Badge>
                 </div>
-                
+
                 <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
                   {job.title}
                 </CardTitle>
-                
+
                 <div className="flex items-center text-emerald-600 font-medium text-lg mb-4">
                   <Building className="h-5 w-5 mr-2" />
                   {job.company}
@@ -131,17 +185,23 @@ const JobDetailsPage = () => {
             {/* Job Description */}
             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">Descrição da Vaga</CardTitle>
+                <CardTitle className="text-xl font-semibold">
+                  Descrição da Vaga
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 leading-relaxed">{job.description}</p>
+                <p className="text-gray-700 leading-relaxed">
+                  {job.description}
+                </p>
               </CardContent>
             </Card>
 
             {/* Requirements */}
             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">Requisitos</CardTitle>
+                <CardTitle className="text-xl font-semibold">
+                  Requisitos
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
@@ -158,7 +218,9 @@ const JobDetailsPage = () => {
             {/* Benefits */}
             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">Benefícios</CardTitle>
+                <CardTitle className="text-xl font-semibold">
+                  Benefícios
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
@@ -179,13 +241,15 @@ const JobDetailsPage = () => {
               {/* Apply Card */}
               <Card className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 shadow-lg">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl font-bold mb-2">{job.salary}</CardTitle>
+                  <CardTitle className="text-2xl font-bold mb-2">
+                    {job.salary}
+                  </CardTitle>
                   <p className="text-emerald-100">Salário mensal</p>
                 </CardHeader>
                 <CardContent>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button 
+                      <Button
                         className="w-full bg-white text-emerald-600 hover:bg-gray-50 font-semibold text-lg py-3 shadow-lg hover:shadow-xl transition-all duration-300"
                         size="lg"
                       >
@@ -196,7 +260,10 @@ const JobDetailsPage = () => {
                       <DialogHeader>
                         <DialogTitle>Candidatar-se à Vaga</DialogTitle>
                       </DialogHeader>
-                      <form onSubmit={handleApplicationSubmit} className="space-y-4">
+                      <form
+                        onSubmit={handleApplicationSubmit}
+                        className="space-y-4"
+                      >
                         <div>
                           <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
                             <User className="h-4 w-4 mr-2" />
@@ -205,7 +272,9 @@ const JobDetailsPage = () => {
                           <Input
                             required
                             value={applicationData.name}
-                            onChange={(e) => handleInputChange('name', e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("name", e.target.value)
+                            }
                             placeholder="Seu nome completo"
                             className="border-emerald-200 focus:border-emerald-400"
                           />
@@ -219,7 +288,9 @@ const JobDetailsPage = () => {
                             type="email"
                             required
                             value={applicationData.email}
-                            onChange={(e) => handleInputChange('email', e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("email", e.target.value)
+                            }
                             placeholder="seu@email.com"
                             className="border-emerald-200 focus:border-emerald-400"
                           />
@@ -233,7 +304,9 @@ const JobDetailsPage = () => {
                             type="tel"
                             required
                             value={applicationData.phone}
-                            onChange={(e) => handleInputChange('phone', e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("phone", e.target.value)
+                            }
                             placeholder="(11) 99999-9999"
                             className="border-emerald-200 focus:border-emerald-400"
                           />
@@ -245,18 +318,20 @@ const JobDetailsPage = () => {
                           </label>
                           <Textarea
                             value={applicationData.coverLetter}
-                            onChange={(e) => handleInputChange('coverLetter', e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("coverLetter", e.target.value)
+                            }
                             placeholder="Por que você é o candidato ideal para esta vaga?"
                             rows={4}
                             className="border-emerald-200 focus:border-emerald-400"
                           />
                         </div>
-                        <Button 
-                          type="submit" 
+                        <Button
+                          type="submit"
                           className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
                           disabled={isApplying}
                         >
-                          {isApplying ? 'Enviando...' : 'Enviar Candidatura'}
+                          {isApplying ? "Enviando..." : "Enviar Candidatura"}
                         </Button>
                       </form>
                     </DialogContent>
@@ -267,14 +342,16 @@ const JobDetailsPage = () => {
               {/* Technologies */}
               <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Tecnologias</CardTitle>
+                  <CardTitle className="text-lg font-semibold">
+                    Tecnologias
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {job.technologies.map((tech) => (
-                      <Badge 
-                        key={tech} 
-                        variant="outline" 
+                      <Badge
+                        key={tech}
+                        variant="outline"
                         className="bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 hover:bg-emerald-100 transition-colors"
                       >
                         {tech}
@@ -287,18 +364,26 @@ const JobDetailsPage = () => {
               {/* Job Info */}
               <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Informações da Vaga</CardTitle>
+                  <CardTitle className="text-lg font-semibold">
+                    Informações da Vaga
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Modalidade:</span>
-                    <Badge className={`${getModalityColor(job.modality)} font-medium`}>
+                    <Badge
+                      className={`${getModalityColor(
+                        job.modality
+                      )} font-medium`}
+                    >
                       {job.modality}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Nível:</span>
-                    <Badge className={`${getLevelColor(job.level)} font-medium`}>
+                    <Badge
+                      className={`${getLevelColor(job.level)} font-medium`}
+                    >
                       {job.level}
                     </Badge>
                   </div>
