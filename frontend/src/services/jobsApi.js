@@ -11,10 +11,45 @@ export const jobsApi = {
   // Buscar todas as vagas
   async getJobs(params = {}) {
     try {
-      const response = await api.get("/issues", { params });
+      // Primeiro, fazer uma chamada simples
+      let response = await api.get("/issues", { params });
+      let allJobs = [...response.data];
+
+      // Verificar se há mais páginas (comum em APIs REST)
+      // Tentar buscar com parâmetros de paginação
+      const paginationParams = [
+        { page: 1, per_page: 100 },
+        { page: 2, per_page: 100 },
+        { page: 3, per_page: 100 },
+      ];
+
+      for (const pageParam of paginationParams) {
+        try {
+          const pageResponse = await api.get("/issues", {
+            params: { ...params, ...pageParam },
+          });
+
+          // Se retornou dados diferentes da primeira chamada, adicionar
+          if (pageResponse.data && pageResponse.data.length > 0) {
+            const newJobs = pageResponse.data.filter(
+              (job) => !allJobs.some((existingJob) => existingJob.id === job.id)
+            );
+            allJobs = [...allJobs, ...newJobs];
+          }
+        } catch (pageError) {
+          // Se der erro na paginação, continuar com os dados que já temos
+          console.log(
+            `Página ${pageParam.page} não disponível:`,
+            pageError.message
+          );
+        }
+      }
+
+      console.log(`Total de vagas carregadas: ${allJobs.length}`);
+
       return {
-        data: response.data,
-        total: response.data.length,
+        data: allJobs,
+        total: allJobs.length,
       };
     } catch (error) {
       console.error("Erro ao buscar vagas:", error);

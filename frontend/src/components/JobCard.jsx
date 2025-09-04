@@ -32,8 +32,8 @@ const JobCard = ({ job }) => {
         },
       });
     } else {
-      // Se estiver logado, abrir a vaga diretamente
-      window.open(job.html_url, "_blank", "noopener,noreferrer");
+      // Se estiver logado, navegar para a página de detalhes da vaga
+      navigate(`/job/${job.id}`);
     }
   };
 

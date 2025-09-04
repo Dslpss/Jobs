@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Header from "../components/Header";
 import {
   Card,
@@ -13,7 +13,6 @@ import { useToast } from "../hooks/use-toast";
 import { jobsApi } from "../services/jobsApi";
 import {
   Calendar,
-  Building,
   ArrowLeft,
   User,
   ExternalLink,
@@ -53,46 +52,6 @@ const JobDetailsPage = () => {
 
     fetchJob();
   }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-        <Header />
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
-            <span className="text-gray-600">Carregando vaga...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !job) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-        <Header />
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <Card className="text-center py-12">
-            <CardContent>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                {error || "Vaga não encontrada"}
-              </h2>
-              <p className="text-gray-600 mb-4">
-                A vaga que você está procurando não existe ou foi removida.
-              </p>
-              <Link to="/">
-                <Button className="bg-emerald-500 hover:bg-emerald-600">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar para vagas
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -184,32 +143,61 @@ const JobDetailsPage = () => {
     return <Laptop className="h-4 w-4" />;
   };
 
-  const modality = getModalityFromLabels(job.labels);
-  const level = getLevelFromLabels(job.labels);
-  const techLabels = getTechFromLabels(job.labels);
-
   const handleApplyToJob = () => {
-    // Tentar diferentes propriedades para encontrar a URL da vaga
-    const jobUrl =
-      job.html_url ||
-      job.url ||
-      job.repository_url ||
-      `https://github.com/${job.repository?.full_name}/issues/${job.number}`;
-
-    if (jobUrl) {
-      window.open(jobUrl, "_blank", "noopener,noreferrer");
+    if (job.html_url) {
+      window.open(job.html_url, "_blank", "noopener,noreferrer");
     } else {
-      // Se não tiver URL, mostrar as informações da vaga
       toast({
-        title: "Informações da vaga",
-        description: `Vaga: ${
-          job.title
-        } - Entre em contato através do repositório ${
-          job.repository?.full_name || "do projeto"
-        }`,
+        title: "Link não disponível",
+        description: "O link para esta vaga não está disponível no momento.",
+        variant: "destructive",
       });
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+        <Header />
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
+            <span className="text-gray-600">Carregando vaga...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !job) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <Card className="text-center py-12">
+            <CardContent>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                {error || "Vaga não encontrada"}
+              </h2>
+              <p className="text-gray-600 mb-4">
+                A vaga que você está procurando não existe ou foi removida.
+              </p>
+              <Link to="/">
+                <Button className="bg-emerald-500 hover:bg-emerald-600">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Voltar para vagas
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  const modality = getModalityFromLabels(job.labels);
+  const level = getLevelFromLabels(job.labels);
+  const techLabels = getTechFromLabels(job.labels);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
@@ -327,18 +315,18 @@ const JobDetailsPage = () => {
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-500">
                   Vaga #{job.number} •{" "}
-                  {job.state === "closed" ? "Fechada" : "Aberta"}
+                  {job.state === "open" ? "Aberta" : "Fechada"}
                 </div>
                 <Button
                   onClick={handleApplyToJob}
                   size="lg"
                   className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                  disabled={job.state === "closed"}
+                  disabled={job.state !== "open"}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  {job.state === "closed"
-                    ? "Vaga fechada"
-                    : "Candidatar-se à vaga"}
+                  {job.state === "open"
+                    ? "Candidatar-se à vaga"
+                    : "Vaga fechada"}
                 </Button>
               </div>
             </div>
