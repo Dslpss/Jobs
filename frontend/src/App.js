@@ -18,7 +18,7 @@ import FeedbackDemoPage from "./pages/FeedbackDemoPage";
 function App() {
   return (
     <div className="App min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-      <BrowserRouter>
+      <BrowserRouter basename="/Jobs">
         <FeedbackProvider>
           <AuthProvider>
             <Routes>

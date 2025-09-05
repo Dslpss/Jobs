@@ -2,9 +2,10 @@
 
 ## 📊 Situação Atual Identificada
 
-O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vagas do GitHub Issues do repositório **backend-br/vagas**. 
+O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vagas do GitHub Issues do repositório **backend-br/vagas**.
 
 **Limitações da API Externa:**
+
 - ❌ Não podemos criar/editar/deletar vagas
 - ❌ Não podemos gerenciar candidaturas reais
 - ❌ Não temos controle sobre os dados
@@ -14,6 +15,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ## 🚀 Funcionalidades Realistas que Podemos Implementar
 
 ### 1. **Sistema de Favoritos/Wishlist** ⭐
+
 ```jsx
 // Armazenar no localStorage ou Firebase
 - Marcar vagas como favoritas
@@ -23,6 +25,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 2. **Sistema de Notas Pessoais** 📝
+
 ```jsx
 // Armazenar no Firebase/localStorage
 - Adicionar notas pessoais em cada vaga
@@ -32,6 +35,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 3. **Analytics e Insights Pessoais** 📊
+
 ```jsx
 // Análise dos dados da API
 - Dashboard pessoal de vagas visualizadas
@@ -41,6 +45,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 4. **Sistema de Recomendações Inteligentes** 🤖
+
 ```jsx
 // Baseado no comportamento do usuário
 - Perfil de interesse (tecnologias, localização, nível)
@@ -50,6 +55,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 5. **Ferramentas de Busca Avançada** 🔍
+
 ```jsx
 // Melhorar a experiência de busca
 - Busca semântica por descrição
@@ -60,6 +66,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 6. **Sistema de Notificações Inteligentes** 🔔
+
 ```jsx
 // Push notifications e emails
 - Alertas de novas vagas por critérios
@@ -69,6 +76,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 7. **Comparador de Vagas** ⚖️
+
 ```jsx
 // Ferramenta de comparação
 - Comparar até 3 vagas lado a lado
@@ -78,6 +86,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 8. **CV/Currículo Builder** 📄
+
 ```jsx
 // Ferramenta complementar
 - Criar currículo baseado nas vagas de interesse
@@ -87,6 +96,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 9. **Networking e Comunidade** 👥
+
 ```jsx
 // Sistema social básico
 - Comentários/reviews sobre empresas
@@ -96,6 +106,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 10. **Ferramentas de Produtividade** ⚡
+
 ```jsx
 // Utilitários para job hunt
 - Calendar de entrevistas
@@ -107,6 +118,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ## 🎨 Melhorias UX/UI Avançadas
 
 ### 11. **Interface Gamificada** 🎮
+
 ```jsx
 // Gamificação da busca por emprego
 - Sistema de XP por ações (visualizar vagas, completar perfil)
@@ -116,6 +128,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 12. **Modo Dark/Light + Temas** 🎨
+
 ```jsx
 // Personalização visual
 - Temas escuro/claro
@@ -125,6 +138,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 13. **PWA Completo** 📱
+
 ```jsx
 // App-like experience
 - Install prompt
@@ -134,6 +148,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ```
 
 ### 14. **Visualizações Alternativas** 📊
+
 ```jsx
 // Diferentes formas de ver os dados
 - Modo kanban (lista, interesse, candidatei)
@@ -145,24 +160,28 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ## 🛠️ Implementação Prática - Por Onde Começar
 
 ### **Fase 1 - Personalização (1-2 semanas)**
+
 1. ✅ Sistema de favoritos (localStorage)
 2. ✅ Notas pessoais por vaga
 3. ✅ Perfil de usuário (tecnologias de interesse)
 4. ✅ Tema escuro/claro
 
 ### **Fase 2 - Inteligência (2-3 semanas)**
+
 1. ✅ Sistema de recomendações
 2. ✅ Busca avançada com filtros complexos
 3. ✅ Analytics pessoais
 4. ✅ Alertas e notificações
 
 ### **Fase 3 - Comunidade (2-3 semanas)**
+
 1. ✅ Sistema de reviews de empresas
 2. ✅ Networking básico
 3. ✅ Compartilhamento de vagas
 4. ✅ Tips and tricks por vaga
 
 ### **Fase 4 - Ferramentas (3-4 semanas)**
+
 1. ✅ CV Builder
 2. ✅ Comparador de vagas
 3. ✅ Calendar de entrevistas
@@ -171,6 +190,7 @@ O projeto usa **API externa** (`https://apibr.com/vagas/api/v2`) que consome vag
 ## 📁 Estrutura de Arquivos para Implementar
 
 ### **Novos Componentes**
+
 ```
 src/components/
   UserProfile/
@@ -196,6 +216,7 @@ src/components/
 ```
 
 ### **Novos Hooks**
+
 ```
 src/hooks/
   useFavorites.js
@@ -207,6 +228,7 @@ src/hooks/
 ```
 
 ### **Novos Contextos**
+
 ```
 src/contexts/
   UserProfileContext.js
@@ -215,6 +237,7 @@ src/contexts/
 ```
 
 ### **Novas Páginas**
+
 ```
 src/pages/
   ProfilePage.jsx
@@ -234,6 +257,7 @@ src/pages/
 3. **Tema escuro** - Melhoria visual rápida e popular
 
 **Quer que eu implemente o sistema de favoritos primeiro?** É uma funcionalidade que:
+
 - ✅ Não depende da API externa
 - ✅ Melhora muito a UX
 - ✅ É base para outras features
@@ -242,6 +266,7 @@ src/pages/
 ## 🎯 Diferencial Competitivo
 
 Com essas funcionalidades, seu projeto se tornará:
+
 - **Mais que um agregador** - Uma ferramenta completa de job hunting
 - **Personalizado** - Cada usuário terá uma experiência única
 - **Inteligente** - Aprende com o comportamento do usuário
