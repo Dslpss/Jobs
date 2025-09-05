@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.css": "https://Dslpss.github.io/Jobs/static/css/main.28026f64.css",
+    "main.js": "https://Dslpss.github.io/Jobs/static/js/main.0e659a7b.js",
+    "index.html": "https://Dslpss.github.io/Jobs/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.28026f64.css",
+    "static/js/main.0e659a7b.js"
+  ]
+}
