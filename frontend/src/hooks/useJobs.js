@@ -34,16 +34,20 @@ export const useJobs = () => {
     if (searchTerm) {
       filtered = filtered.filter(
         (job) =>
-          job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.repository?.full_name
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+          job &&
+          job.title &&
+          (job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            job.repository?.full_name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()))
       );
     }
 
     // Filtro por tecnologia
     if (selectedTech) {
       filtered = filtered.filter((job) =>
+        job &&
+        job.labels &&
         job.labels.some((label) =>
           label.name.toLowerCase().includes(selectedTech.toLowerCase())
         )
@@ -53,6 +57,8 @@ export const useJobs = () => {
     // Filtro por modalidade
     if (selectedModality) {
       filtered = filtered.filter((job) =>
+        job &&
+        job.labels &&
         job.labels.some((label) =>
           label.name.toLowerCase().includes(selectedModality.toLowerCase())
         )
@@ -62,6 +68,8 @@ export const useJobs = () => {
     // Filtro por nível
     if (selectedLevel) {
       filtered = filtered.filter((job) =>
+        job &&
+        job.labels &&
         job.labels.some((label) =>
           label.name.toLowerCase().includes(selectedLevel.toLowerCase())
         )
@@ -91,17 +99,25 @@ export const useJobs = () => {
   const stats = useMemo(() => {
     const total = filteredJobs.length;
     const remote = filteredJobs.filter((job) =>
+      job &&
+      job.labels &&
       job.labels.some((label) => label.name.toLowerCase().includes("remoto"))
     ).length;
     const onsite = filteredJobs.filter((job) =>
+      job &&
+      job.labels &&
       job.labels.some((label) =>
         label.name.toLowerCase().includes("presencial")
       )
     ).length;
     const hybrid = filteredJobs.filter((job) =>
+      job &&
+      job.labels &&
       job.labels.some((label) => label.name.toLowerCase().includes("híbrido"))
     ).length;
     const junior = filteredJobs.filter((job) =>
+      job &&
+      job.labels &&
       job.labels.some(
         (label) =>
           label.name.toLowerCase().includes("júnior") ||
@@ -109,9 +125,13 @@ export const useJobs = () => {
       )
     ).length;
     const mid = filteredJobs.filter((job) =>
+      job &&
+      job.labels &&
       job.labels.some((label) => label.name.toLowerCase().includes("pleno"))
     ).length;
     const senior = filteredJobs.filter((job) =>
+      job &&
+      job.labels &&
       job.labels.some(
         (label) =>
           label.name.toLowerCase().includes("sênior") ||

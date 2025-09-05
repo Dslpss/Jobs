@@ -21,6 +21,11 @@ import {
 } from "lucide-react";
 
 const JobCard = ({ job }) => {
+  // Validação para evitar erro quando job é null
+  if (!job) {
+    return null;
+  }
+
   // Log temporário para debug
   console.log("Job structure:", {
     id: job.id,

@@ -62,7 +62,7 @@ const JobDetailsPage = () => {
           // Erro já tratado pelo useFeedback
         });
     }
-  }, [id, feedback]);
+  }, [id]); // Removido 'feedback' das dependências
 
   const handleRetry = () => {
     window.location.reload();
@@ -195,6 +195,25 @@ const JobDetailsPage = () => {
       return <Users className="h-4 w-4" />;
     return <Laptop className="h-4 w-4" />;
   };
+
+  // Verificação de segurança antes de acessar job.labels
+  if (!job) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          {feedback.loading && <EnhancedLoader />}
+          {feedback.error && (
+            <ErrorState
+              title="Erro ao carregar vaga"
+              description={feedback.error}
+              onRetry={() => window.location.reload()}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const modality = getModalityFromLabels(job.labels);
   const level = getLevelFromLabels(job.labels);
