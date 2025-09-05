@@ -25,8 +25,12 @@ export const AuthProvider = ({ children }) => {
 
   // Monitor authentication state with Firebase
   useEffect(() => {
+    let mounted = true;
+
     try {
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (!mounted) return;
+
         try {
           if (firebaseUser) {
             // Get additional user data from Firestore
@@ -37,45 +41,92 @@ export const AuthProvider = ({ children }) => {
             const adminDoc = await getDoc(doc(db, "admins", firebaseUser.uid));
             const isAdmin = adminDoc.exists();
 
-            setUser({
-              uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              displayName: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL,
-              isAdmin,
-              ...userData,
-            });
+            if (mounted) {
+              setUser({
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                displayName: firebaseUser.displayName,
+                photoURL: firebaseUser.photoURL,
+                isAdmin,
+                ...userData,
+              });
+            }
           } else {
-            setUser(null);
+            if (mounted) {
+              setUser(null);
+            }
           }
         } catch (error) {
           console.error("Error in auth state change:", error);
           // Fallback: set basic user data without Firestore
-          if (firebaseUser) {
+          if (firebaseUser && mounted) {
             setUser({
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               displayName: firebaseUser.displayName,
               photoURL: firebaseUser.photoURL,
             });
-          } else {
+          } else if (mounted) {
             setUser(null);
           }
         } finally {
-          setLoading(false);
+          if (mounted) {
+            setLoading(false);
+          }
         }
       });
 
-      return () => unsubscribe();
+      return () => {
+        mounted = false;
+        unsubscribe();
+      };
     } catch (error) {
       console.error("Error setting up auth listener:", error);
-      setLoading(false);
+      if (mounted) {
+        setLoading(false);
+      }
     }
   }, []);
 
   const login = async (email, password) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const firebaseUser = userCredential.user;
+
+      // Aguardar um pouco para garantir que o onAuthStateChanged seja disparado
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Atualizar o estado do usuário imediatamente após o login
+      try {
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
+
+        const adminDoc = await getDoc(doc(db, "admins", firebaseUser.uid));
+        const isAdmin = adminDoc.exists();
+
+        setUser({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          isAdmin,
+          ...userData,
+        });
+      } catch (firestoreError) {
+        console.error("Error fetching user data:", firestoreError);
+        // Fallback: definir dados básicos do usuário
+        setUser({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+        });
+      }
+
       return { success: true };
     } catch (error) {
       console.error("Login error:", error);
@@ -121,7 +172,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
+      setLoading(true);
       await signOut(auth);
+      setUser(null);
       return { success: true };
     } catch (error) {
       console.error("Logout error:", error);
@@ -129,6 +182,8 @@ export const AuthProvider = ({ children }) => {
         success: false,
         error: "Erro ao fazer logout",
       };
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -39,21 +39,29 @@ const LoginPage = () => {
     setLoading(true);
     setError("");
 
-    const result = await login(formData.email, formData.password);
+    try {
+      const result = await login(formData.email, formData.password);
 
-    if (result.success) {
-      // Se tinha uma URL de vaga específica, abrir diretamente
-      if (location.state?.jobUrl) {
-        window.open(location.state.jobUrl, "_blank", "noopener,noreferrer");
-        navigate("/", { replace: true });
+      if (result.success) {
+        // Aguardar um pouco para garantir que o estado seja atualizado
+        await new Promise((resolve) => setTimeout(resolve, 200));
+
+        // Se tinha uma URL de vaga específica, abrir diretamente
+        if (location.state?.jobUrl) {
+          window.open(location.state.jobUrl, "_blank", "noopener,noreferrer");
+          navigate("/", { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
       } else {
-        navigate(from, { replace: true });
+        setError(result.error || "Erro ao fazer login");
       }
-    } else {
-      setError(result.error || "Erro ao fazer login");
+    } catch (error) {
+      console.error("Erro inesperado no login:", error);
+      setError("Erro inesperado. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

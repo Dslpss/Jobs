@@ -1,9 +1,10 @@
-// Firebase configuration with environment variables
+// Firebase configuration - SECURE VERSION
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
+// SECURITY: Only use environment variables (no fallbacks in production)
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -15,23 +16,10 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
-// Validate that all required environment variables are present
-const requiredEnvVars = [
-  "REACT_APP_FIREBASE_API_KEY",
-  "REACT_APP_FIREBASE_AUTH_DOMAIN",
-  "REACT_APP_FIREBASE_PROJECT_ID",
-  "REACT_APP_FIREBASE_STORAGE_BUCKET",
-  "REACT_APP_FIREBASE_MESSAGING_SENDER_ID",
-  "REACT_APP_FIREBASE_APP_ID",
-];
-
-const missingEnvVars = requiredEnvVars.filter(
-  (varName) => !process.env[varName]
-);
-
-if (missingEnvVars.length > 0) {
+// Validate configuration
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
   throw new Error(
-    `Missing required environment variables: ${missingEnvVars.join(", ")}`
+    "❌ ERRO DE SEGURANÇA: Configure as variáveis de ambiente do Firebase!"
   );
 }
 
@@ -42,11 +30,7 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Initialize Analytics only in production and if measurementId is available
-export const analytics =
-  process.env.NODE_ENV === "production" &&
-  process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-    ? getAnalytics(app)
-    : null;
+// Initialize Analytics
+export const analytics = getAnalytics(app);
 
 export default app;
