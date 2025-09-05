@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/toaster";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
 import JobDetailsPage from "./pages/JobDetailsPage";
 import AdminPage from "./pages/AdminPage";
@@ -37,6 +38,7 @@ function App() {
               }
             />
           </Routes>
+          <Footer />
           <Toaster />
         </AuthProvider>
       </BrowserRouter>
