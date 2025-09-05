@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/toaster";
 import { AuthProvider } from "./contexts/AuthContext";
 import { FeedbackProvider } from "./contexts/FeedbackContext";
 import GlobalFeedbackOverlay from "./components/GlobalFeedbackOverlay";
+import UpdateNotification from "./components/UpdateNotification";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import Footer from "./components/Footer";
@@ -46,6 +47,7 @@ function App() {
             <Footer />
             <Toaster />
             <GlobalFeedbackOverlay />
+            <UpdateNotification />
           </AuthProvider>
         </FeedbackProvider>
       </BrowserRouter>

@@ -48,9 +48,17 @@ const Header = () => {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full border-2 border-white shadow-sm animate-pulse"></div>
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent group-hover:from-emerald-500 group-hover:to-teal-500 transition-all duration-300">
-                DevJobs
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent group-hover:from-emerald-500 group-hover:to-teal-500 transition-all duration-300">
+                  DevJobs
+                </span>
+                <div className="relative">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg">
+                    v2.1
+                  </span>
+                  <div className="absolute -top-1 -right-1 h-2 w-2 bg-yellow-400 rounded-full animate-ping"></div>
+                </div>
+              </div>
               <span className="text-xs text-emerald-600/70 font-medium -mt-1">
                 Premium Platform
               </span>

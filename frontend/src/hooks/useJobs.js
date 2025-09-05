@@ -45,34 +45,37 @@ export const useJobs = () => {
 
     // Filtro por tecnologia
     if (selectedTech) {
-      filtered = filtered.filter((job) =>
-        job &&
-        job.labels &&
-        job.labels.some((label) =>
-          label.name.toLowerCase().includes(selectedTech.toLowerCase())
-        )
+      filtered = filtered.filter(
+        (job) =>
+          job &&
+          job.labels &&
+          job.labels.some((label) =>
+            label.name.toLowerCase().includes(selectedTech.toLowerCase())
+          )
       );
     }
 
     // Filtro por modalidade
     if (selectedModality) {
-      filtered = filtered.filter((job) =>
-        job &&
-        job.labels &&
-        job.labels.some((label) =>
-          label.name.toLowerCase().includes(selectedModality.toLowerCase())
-        )
+      filtered = filtered.filter(
+        (job) =>
+          job &&
+          job.labels &&
+          job.labels.some((label) =>
+            label.name.toLowerCase().includes(selectedModality.toLowerCase())
+          )
       );
     }
 
     // Filtro por nível
     if (selectedLevel) {
-      filtered = filtered.filter((job) =>
-        job &&
-        job.labels &&
-        job.labels.some((label) =>
-          label.name.toLowerCase().includes(selectedLevel.toLowerCase())
-        )
+      filtered = filtered.filter(
+        (job) =>
+          job &&
+          job.labels &&
+          job.labels.some((label) =>
+            label.name.toLowerCase().includes(selectedLevel.toLowerCase())
+          )
       );
     }
 
@@ -98,45 +101,51 @@ export const useJobs = () => {
   // Calcular estatísticas usando useMemo
   const stats = useMemo(() => {
     const total = filteredJobs.length;
-    const remote = filteredJobs.filter((job) =>
-      job &&
-      job.labels &&
-      job.labels.some((label) => label.name.toLowerCase().includes("remoto"))
+    const remote = filteredJobs.filter(
+      (job) =>
+        job &&
+        job.labels &&
+        job.labels.some((label) => label.name.toLowerCase().includes("remoto"))
     ).length;
-    const onsite = filteredJobs.filter((job) =>
-      job &&
-      job.labels &&
-      job.labels.some((label) =>
-        label.name.toLowerCase().includes("presencial")
-      )
+    const onsite = filteredJobs.filter(
+      (job) =>
+        job &&
+        job.labels &&
+        job.labels.some((label) =>
+          label.name.toLowerCase().includes("presencial")
+        )
     ).length;
-    const hybrid = filteredJobs.filter((job) =>
-      job &&
-      job.labels &&
-      job.labels.some((label) => label.name.toLowerCase().includes("híbrido"))
+    const hybrid = filteredJobs.filter(
+      (job) =>
+        job &&
+        job.labels &&
+        job.labels.some((label) => label.name.toLowerCase().includes("híbrido"))
     ).length;
-    const junior = filteredJobs.filter((job) =>
-      job &&
-      job.labels &&
-      job.labels.some(
-        (label) =>
-          label.name.toLowerCase().includes("júnior") ||
-          label.name.toLowerCase().includes("junior")
-      )
+    const junior = filteredJobs.filter(
+      (job) =>
+        job &&
+        job.labels &&
+        job.labels.some(
+          (label) =>
+            label.name.toLowerCase().includes("júnior") ||
+            label.name.toLowerCase().includes("junior")
+        )
     ).length;
-    const mid = filteredJobs.filter((job) =>
-      job &&
-      job.labels &&
-      job.labels.some((label) => label.name.toLowerCase().includes("pleno"))
+    const mid = filteredJobs.filter(
+      (job) =>
+        job &&
+        job.labels &&
+        job.labels.some((label) => label.name.toLowerCase().includes("pleno"))
     ).length;
-    const senior = filteredJobs.filter((job) =>
-      job &&
-      job.labels &&
-      job.labels.some(
-        (label) =>
-          label.name.toLowerCase().includes("sênior") ||
-          label.name.toLowerCase().includes("senior")
-      )
+    const senior = filteredJobs.filter(
+      (job) =>
+        job &&
+        job.labels &&
+        job.labels.some(
+          (label) =>
+            label.name.toLowerCase().includes("sênior") ||
+            label.name.toLowerCase().includes("senior")
+        )
     ).length;
 
     return {
