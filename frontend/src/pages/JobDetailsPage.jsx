@@ -8,7 +8,9 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { useToast } from "../hooks/use-toast";
+import { EnhancedLoader } from "../components/LoadingComponents";
+import { ErrorState } from "../components/FeedbackComponents";
+import { useFeedback } from "../hooks/useFeedback";
 import { jobsApi } from "../services/jobsApi";
 import {
   Calendar,
@@ -18,7 +20,6 @@ import {
   ExternalLink,
   Github,
   MessageCircle,
-  Loader2,
   Home,
   Building2,
   Users,
@@ -28,110 +29,69 @@ import {
 const JobDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const feedback = useFeedback();
 
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        setLoading(true);
-        setError(null);
         console.log("Buscando vaga com ID da URL:", id);
-
         const jobData = await jobsApi.getJobById(id);
         console.log("Dados da vaga recebidos:", jobData);
 
-        if (jobData) {
-          setJob(jobData);
-        } else {
-          setError("Vaga não encontrada");
-        }
+        return jobData;
       } catch (err) {
         console.error("Erro completo ao buscar vaga:", err);
-        setError("Vaga não encontrada");
-      } finally {
-        setLoading(false);
+        throw new Error("Vaga não encontrada");
       }
     };
 
     if (id) {
-      fetchJob();
+      feedback
+        .fetchData(fetchJob, {
+          loadingMessage: "Carregando detalhes da vaga...",
+          emptyMessage: "Vaga não encontrada",
+          emptyCheck: (data) => !data,
+        })
+        .then((data) => {
+          if (data) {
+            setJob(data);
+          }
+        })
+        .catch(() => {
+          // Erro já tratado pelo useFeedback
+        });
     }
-  }, [id]);
+  }, [id, feedback]);
 
-  if (loading) {
+  const handleRetry = () => {
+    window.location.reload();
+  };
+
+  if (feedback.isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
         <Header />
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
-            <span className="text-gray-600">Carregando vaga...</span>
-          </div>
-        </div>
+        <EnhancedLoader
+          title="Carregando detalhes da vaga..."
+          subtitle="Buscando informações completas para você"
+        />
       </div>
     );
   }
 
-  if (error || !job) {
+  if (feedback.isError || feedback.isEmpty) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
         <Header />
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <Card className="text-center py-12">
-            <CardContent>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                {error || "Vaga não encontrada"}
-              </h2>
-              <p className="text-gray-600 mb-4">
-                A vaga que você está procurando não existe ou foi removida.
-              </p>
-              <button
-                onClick={() => {
-                  console.log("Navegando para home...");
-                  navigate("/");
-                }}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "12px 24px",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                  color: "white",
-                  background: "linear-gradient(to right, #10b981, #14b8a6)",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  boxShadow:
-                    "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)",
-                  transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
-                  position: "relative",
-                  zIndex: 10,
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background =
-                    "linear-gradient(to right, #059669, #0d9488)";
-                  e.target.style.boxShadow =
-                    "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)";
-                  e.target.style.transform = "translateY(-1px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background =
-                    "linear-gradient(to right, #10b981, #14b8a6)";
-                  e.target.style.boxShadow =
-                    "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)";
-                  e.target.style.transform = "translateY(0px)";
-                }}
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar para vagas
-              </button>
-            </CardContent>
-          </Card>
-        </div>
+        <ErrorState
+          title={
+            feedback.isEmpty ? "Vaga não encontrada" : "Erro ao carregar vaga"
+          }
+          message={feedback.message}
+          onRetry={handleRetry}
+          retryText="Tentar novamente"
+        />
       </div>
     );
   }

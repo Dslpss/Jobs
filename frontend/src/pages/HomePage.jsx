@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import JobCard from "../components/JobCard";
 import JobFilters from "../components/JobFilters";
+import {
+  EnhancedLoader,
+  SkeletonLoader,
+} from "../components/LoadingComponents";
+import { ErrorState, EmptyState } from "../components/FeedbackComponents";
 import { useJobs } from "../hooks/useJobs";
 import {
   Search,
@@ -282,9 +287,7 @@ const HomePage = () => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
-          >
-           
-          </svg>
+          ></svg>
         </div>
         {/* Elementos decorativos de background */}
         <div className="absolute top-10 left-10 w-32 h-32 bg-emerald-500/30 rounded-full blur-xl animate-pulse"></div>
@@ -339,97 +342,31 @@ const HomePage = () => {
 
               {/* Loading State com efeitos especiais */}
               {loading && (
-                <div className="text-center py-16">
-                  <div className="relative inline-block">
-                    <div className="w-16 h-16 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-6"></div>
-                    <div
-                      className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-teal-400 rounded-full animate-spin mx-auto"
-                      style={{
-                        animationDirection: "reverse",
-                        animationDuration: "1.5s",
-                      }}
-                    ></div>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                      <Code className="inline h-5 w-5 mr-2" />
-                      Carregando vagas incríveis...
-                    </h3>
-                    <p className="text-slate-600">
-                      <Terminal className="inline h-4 w-4 mr-2" />
-                      Buscando as melhores oportunidades em tech para você
-                    </p>
-                  </div>
-
-                  {/* Skeleton cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className="bg-white rounded-xl p-6 shadow-sm border animate-pulse"
-                      >
-                        <div className="h-6 bg-slate-200 rounded mb-4"></div>
-                        <div className="h-4 bg-slate-200 rounded mb-2"></div>
-                        <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <EnhancedLoader
+                  title="Carregando vagas incríveis..."
+                  subtitle="Buscando as melhores oportunidades em tech para você"
+                />
               )}
 
               {/* Error State melhorado */}
               {error && (
-                <div className="text-center py-16">
-                  <div className="relative inline-block mb-6">
-                    <AlertCircle className="h-16 w-16 text-red-500 mx-auto animate-pulse" />
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full animate-ping"></div>
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-2xl font-bold text-slate-800">
-                      Ops! Algo deu errado
-                    </h3>
-                    <p className="text-slate-600 max-w-md mx-auto">{error}</p>
-                    <button
-                      onClick={refetch}
-                      className="group relative px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/30 overflow-hidden"
-                    >
-                      <span className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                      <span className="relative flex items-center">
-                        <Zap className="h-4 w-4 mr-2" />
-                        Tentar novamente
-                      </span>
-                    </button>
-                  </div>
-                </div>
+                <ErrorState
+                  title="Ops! Algo deu errado"
+                  message={error}
+                  onRetry={refetch}
+                  retryText="Tentar novamente"
+                />
               )}
 
               {/* Empty State melhorado */}
               {!loading && !error && jobs.length === 0 && (
-                <div className="text-center py-16">
-                  <div className="relative inline-block mb-6">
-                    <Search className="h-16 w-16 text-slate-400 mx-auto" />
-                    <div className="absolute inset-0 animate-ping">
-                      <Search className="h-16 w-16 text-emerald-400 mx-auto opacity-20" />
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-2xl font-bold text-slate-800">
-                      Nenhuma vaga encontrada
-                    </h3>
-                    <p className="text-slate-600 max-w-md mx-auto">
-                      Tente ajustar seus filtros ou explore outras categorias
-                    </p>
-                    <button
-                      onClick={clearFilters}
-                      className="group relative px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/30"
-                    >
-                      <span className="flex items-center">
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        Limpar filtros
-                      </span>
-                    </button>
-                  </div>
-                </div>
+                <EmptyState
+                  title="Nenhuma vaga encontrada"
+                  message="Tente ajustar seus filtros ou explore outras categorias"
+                  icon={Search}
+                  action={clearFilters}
+                  actionText="Limpar filtros"
+                />
               )}
 
               {/* Jobs Grid com animações */}
