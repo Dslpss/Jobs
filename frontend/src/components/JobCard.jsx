@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -15,28 +14,9 @@ import {
   Laptop,
   Home,
   Users,
-  Lock,
 } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
 
 const JobCard = ({ job }) => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const handleViewJob = () => {
-    if (!isAuthenticated) {
-      // Redirecionar para login, salvando a intenção de ver esta vaga
-      navigate("/login", {
-        state: {
-          from: { pathname: `/job/${job.id}` },
-          jobUrl: job.html_url,
-        },
-      });
-    } else {
-      // Se estiver logado, navegar para a página de detalhes da vaga
-      navigate(`/job/${job.id}`);
-    }
-  };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR");
@@ -215,23 +195,20 @@ const JobCard = ({ job }) => {
             <span className="ml-2 text-gray-400">#{job.number}</span>
           </div>
 
-          <Button
-            onClick={handleViewJob}
-            size="sm"
-            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-1"
+          <a
+            href={job.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block"
           >
-            {isAuthenticated ? (
-              <>
-                <ExternalLink className="h-3 w-3" />
-                Ver vaga
-              </>
-            ) : (
-              <>
-                <Lock className="h-3 w-3" />
-                Fazer login para ver
-              </>
-            )}
-          </Button>
+            <Button
+              size="sm"
+              className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-1"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Ver vaga
+            </Button>
+          </a>
         </div>
       </CardContent>
     </Card>
