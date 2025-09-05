@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import {
   Card,
@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
 import { useToast } from "../hooks/use-toast";
 import { jobsApi } from "../services/jobsApi";
 import {
@@ -28,6 +27,7 @@ import {
 
 const JobDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -88,12 +88,47 @@ const JobDetailsPage = () => {
               <p className="text-gray-600 mb-4">
                 A vaga que você está procurando não existe ou foi removida.
               </p>
-              <Link to="/">
-                <Button className="bg-emerald-500 hover:bg-emerald-600">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar para vagas
-                </Button>
-              </Link>
+              <button
+                onClick={() => {
+                  console.log("Navegando para home...");
+                  navigate("/");
+                }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "12px 24px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  color: "white",
+                  background: "linear-gradient(to right, #10b981, #14b8a6)",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  boxShadow:
+                    "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)",
+                  transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+                  position: "relative",
+                  zIndex: 10,
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background =
+                    "linear-gradient(to right, #059669, #0d9488)";
+                  e.target.style.boxShadow =
+                    "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)";
+                  e.target.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background =
+                    "linear-gradient(to right, #10b981, #14b8a6)";
+                  e.target.style.boxShadow =
+                    "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06)";
+                  e.target.style.transform = "translateY(0px)";
+                }}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar para vagas
+              </button>
             </CardContent>
           </Card>
         </div>
@@ -206,24 +241,54 @@ const JobDetailsPage = () => {
   const techLabels = getTechFromLabels(job.labels);
 
   const handleApplyToJob = () => {
-    // Tentar diferentes propriedades para encontrar a URL da vaga
-    const jobUrl =
+    console.log("Candidatando-se à vaga:", job.title);
+
+    if (!job) {
+      toast({
+        title: "Erro",
+        description: "Dados da vaga não encontrados",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Construir URL da vaga
+    const finalUrl =
       job.html_url ||
       job.url ||
-      job.repository_url ||
-      `https://github.com/${job.repository?.full_name}/issues/${job.number}`;
+      `https://github.com/backend-br/vagas/issues/${job.number}`;
 
-    if (jobUrl) {
-      window.open(jobUrl, "_blank", "noopener,noreferrer");
+    console.log("Abrindo vaga:", finalUrl);
+
+    if (finalUrl && finalUrl !== "undefined") {
+      try {
+        // Criar um link temporário e clicar nele (evita popup blocker)
+        const link = document.createElement("a");
+        link.href = finalUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({
+          title: "Redirecionando...",
+          description: "Abrindo a vaga no GitHub para você se candidatar!",
+        });
+      } catch (error) {
+        console.error("Erro ao abrir URL:", error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível abrir a vaga. Tente novamente.",
+          variant: "destructive",
+        });
+      }
     } else {
-      // Se não tiver URL, mostrar as informações da vaga
       toast({
-        title: "Informações da vaga",
-        description: `Vaga: ${
-          job.title
-        } - Entre em contato através do repositório ${
-          job.repository?.full_name || "do projeto"
-        }`,
+        title: "URL não disponível",
+        description:
+          "Não foi possível encontrar o link da vaga. Verifique diretamente no repositório backend-br/vagas.",
+        variant: "destructive",
       });
     }
   };
@@ -234,15 +299,43 @@ const JobDetailsPage = () => {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Botão Voltar */}
         <div className="mb-6">
-          <Link to="/">
-            <Button
-              variant="ghost"
-              className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar para vagas
-            </Button>
-          </Link>
+          <button
+            onClick={() => {
+              console.log("Navegando para home...");
+              navigate("/");
+            }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "10px 20px",
+              fontSize: "15px",
+              fontWeight: "500",
+              color: "#059669",
+              background: "rgba(16, 185, 129, 0.1)",
+              border: "1px solid rgba(16, 185, 129, 0.3)",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+              position: "relative",
+              zIndex: 10,
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "rgba(16, 185, 129, 0.2)";
+              e.target.style.borderColor = "rgba(16, 185, 129, 0.5)";
+              e.target.style.color = "#047857";
+              e.target.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "rgba(16, 185, 129, 0.1)";
+              e.target.style.borderColor = "rgba(16, 185, 129, 0.3)";
+              e.target.style.color = "#059669";
+              e.target.style.transform = "translateY(0px)";
+            }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar para vagas
+          </button>
         </div>
 
         {/* Card Principal da Vaga */}
@@ -347,28 +440,71 @@ const JobDetailsPage = () => {
               </div>
             </div>
 
-            {/* Botão de candidatura */}
+            {/* Informações da vaga */}
             <div className="mt-8 pt-6 border-t border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500">
-                  Vaga #{job.number} •{" "}
-                  {job.state === "closed" ? "Fechada" : "Aberta"}
-                </div>
-                <Button
-                  onClick={handleApplyToJob}
-                  size="lg"
-                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                  disabled={job.state === "closed"}
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  {job.state === "closed"
-                    ? "Vaga fechada"
-                    : "Candidatar-se à vaga"}
-                </Button>
+              <div className="text-sm text-gray-500">
+                Vaga #{job.number} •{" "}
+                {job.state === "closed" ? "Fechada" : "Aberta"}
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Botão de Candidatura - FORA DO CARD */}
+        <div className="mb-6 text-center">
+          <button
+            onClick={() => {
+              console.log("🚀 Candidatando-se à vaga!");
+              handleApplyToJob();
+            }}
+            disabled={job.state === "closed"}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              padding: "12px 32px",
+              fontSize: "18px",
+              fontWeight: "600",
+              color: "white",
+              background:
+                job.state === "closed"
+                  ? "linear-gradient(to right, #9ca3af, #6b7280)"
+                  : "linear-gradient(to right, #10b981, #14b8a6)",
+              border: "none",
+              borderRadius: "8px",
+              cursor: job.state === "closed" ? "not-allowed" : "pointer",
+              boxShadow:
+                "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+              transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+              opacity: job.state === "closed" ? 0.6 : 1,
+              pointerEvents: "auto",
+              position: "relative",
+              zIndex: 10,
+            }}
+            onMouseEnter={(e) => {
+              if (job.state !== "closed") {
+                e.target.style.background =
+                  "linear-gradient(to right, #059669, #0d9488)";
+                e.target.style.boxShadow =
+                  "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)";
+                e.target.style.transform = "translateY(-2px)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (job.state !== "closed") {
+                e.target.style.background =
+                  "linear-gradient(to right, #10b981, #14b8a6)";
+                e.target.style.boxShadow =
+                  "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)";
+                e.target.style.transform = "translateY(0px)";
+              }
+            }}
+          >
+            <ExternalLink className="h-5 w-5" />
+            {job.state === "closed" ? "Vaga fechada" : "Candidatar-se à vaga"}
+          </button>
+        </div>
       </div>
     </div>
   );
