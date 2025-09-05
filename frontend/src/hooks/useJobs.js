@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { jobsApi } from "../services/jobsApi";
 
 export const useJobs = () => {
   const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,17 +11,6 @@ export const useJobs = () => {
   const [selectedLevel, setSelectedLevel] = useState("");
   const [selectedRepository, setSelectedRepository] = useState("");
 
-  // Estatísticas
-  const [stats, setStats] = useState({
-    total: 0,
-    remote: 0,
-    onsite: 0,
-    hybrid: 0,
-    junior: 0,
-    mid: 0,
-    senior: 0,
-  });
-
   // Buscar todas as vagas
   const fetchJobs = useCallback(async () => {
     setLoading(true);
@@ -30,8 +18,6 @@ export const useJobs = () => {
     try {
       const response = await jobsApi.getJobs();
       setJobs(response.data);
-      setFilteredJobs(response.data);
-      calculateStats(response.data);
     } catch (err) {
       setError("Erro ao carregar vagas. Tente novamente.");
       console.error("Erro ao buscar vagas:", err);
@@ -40,51 +26,8 @@ export const useJobs = () => {
     }
   }, []);
 
-  // Calcular estatísticas
-  const calculateStats = (jobsList) => {
-    const total = jobsList.length;
-    const remote = jobsList.filter((job) =>
-      job.labels.some((label) => label.name.toLowerCase().includes("remoto"))
-    ).length;
-    const onsite = jobsList.filter((job) =>
-      job.labels.some((label) =>
-        label.name.toLowerCase().includes("presencial")
-      )
-    ).length;
-    const hybrid = jobsList.filter((job) =>
-      job.labels.some((label) => label.name.toLowerCase().includes("híbrido"))
-    ).length;
-    const junior = jobsList.filter((job) =>
-      job.labels.some(
-        (label) =>
-          label.name.toLowerCase().includes("júnior") ||
-          label.name.toLowerCase().includes("junior")
-      )
-    ).length;
-    const mid = jobsList.filter((job) =>
-      job.labels.some((label) => label.name.toLowerCase().includes("pleno"))
-    ).length;
-    const senior = jobsList.filter((job) =>
-      job.labels.some(
-        (label) =>
-          label.name.toLowerCase().includes("sênior") ||
-          label.name.toLowerCase().includes("senior")
-      )
-    ).length;
-
-    setStats({
-      total,
-      remote,
-      onsite,
-      hybrid,
-      junior,
-      mid,
-      senior,
-    });
-  };
-
-  // Aplicar filtros
-  const applyFilters = useCallback(() => {
+  // Aplicar filtros usando useMemo para otimização
+  const filteredJobs = useMemo(() => {
     let filtered = [...jobs];
 
     // Filtro por termo de busca
@@ -134,8 +77,7 @@ export const useJobs = () => {
       );
     }
 
-    setFilteredJobs(filtered);
-    calculateStats(filtered);
+    return filtered;
   }, [
     jobs,
     searchTerm,
@@ -145,21 +87,57 @@ export const useJobs = () => {
     selectedRepository,
   ]);
 
+  // Calcular estatísticas usando useMemo
+  const stats = useMemo(() => {
+    const total = filteredJobs.length;
+    const remote = filteredJobs.filter((job) =>
+      job.labels.some((label) => label.name.toLowerCase().includes("remoto"))
+    ).length;
+    const onsite = filteredJobs.filter((job) =>
+      job.labels.some((label) =>
+        label.name.toLowerCase().includes("presencial")
+      )
+    ).length;
+    const hybrid = filteredJobs.filter((job) =>
+      job.labels.some((label) => label.name.toLowerCase().includes("híbrido"))
+    ).length;
+    const junior = filteredJobs.filter((job) =>
+      job.labels.some(
+        (label) =>
+          label.name.toLowerCase().includes("júnior") ||
+          label.name.toLowerCase().includes("junior")
+      )
+    ).length;
+    const mid = filteredJobs.filter((job) =>
+      job.labels.some((label) => label.name.toLowerCase().includes("pleno"))
+    ).length;
+    const senior = filteredJobs.filter((job) =>
+      job.labels.some(
+        (label) =>
+          label.name.toLowerCase().includes("sênior") ||
+          label.name.toLowerCase().includes("senior")
+      )
+    ).length;
+
+    return {
+      total,
+      remote,
+      onsite,
+      hybrid,
+      junior,
+      mid,
+      senior,
+    };
+  }, [filteredJobs]);
+
   // Limpar filtros
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearchTerm("");
     setSelectedTech("");
     setSelectedModality("");
     setSelectedLevel("");
     setSelectedRepository("");
-    setFilteredJobs(jobs);
-    calculateStats(jobs);
-  };
-
-  // Efeito para aplicar filtros quando mudarem
-  useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
+  }, []);
 
   // Carregar vagas na inicialização
   useEffect(() => {

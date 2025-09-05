@@ -1,15 +1,11 @@
-import React from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { SelectItem } from "./ui/select";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import SafeSelect from "./SafeSelect";
+import useDebounce from "../hooks/useDebounce";
 import {
   Search,
   Filter,
@@ -57,6 +53,22 @@ const JobFilters = ({
   clearFilters,
   stats,
 }) => {
+  // Estado local para o input de busca para evitar lag na digitação
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+
+  // Debounce do termo de busca para evitar muitas re-renderizações
+  const debouncedSearchTerm = useDebounce(localSearchTerm, 300);
+
+  // Atualiza o searchTerm pai quando o debounced value muda
+  useEffect(() => {
+    setSearchTerm(debouncedSearchTerm);
+  }, [debouncedSearchTerm, setSearchTerm]);
+
+  // Sincroniza quando o searchTerm pai muda externamente (ex: clearFilters)
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm);
+  }, [searchTerm]);
+
   const hasActiveFilters =
     selectedTech ||
     selectedModality ||
@@ -106,8 +118,8 @@ const JobFilters = ({
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-emerald-500 z-10" />
             <Input
               placeholder="🔍 Buscar vagas incríveis..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={localSearchTerm}
+              onChange={(e) => setLocalSearchTerm(e.target.value)}
               className="pl-12 h-12 border-2 border-emerald-200/50 focus:border-emerald-400 focus:ring-emerald-400/30 bg-white/90 backdrop-blur-sm rounded-xl text-base font-medium placeholder:text-gray-400 transition-all duration-300 hover:shadow-lg focus:shadow-emerald-500/20"
             />
           </div>
@@ -123,22 +135,23 @@ const JobFilters = ({
           </label>
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg blur opacity-20 group-hover:opacity-40 transition-all duration-300"></div>
-            <Select value={selectedTech} onValueChange={setSelectedTech}>
-              <SelectTrigger className="relative h-11 border-2 border-blue-200/50 focus:border-blue-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300">
-                <SelectValue placeholder="💻 Selecione uma tecnologia" />
-              </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-xl border-blue-200/50 shadow-xl">
-                {technologies.map((tech) => (
-                  <SelectItem
-                    key={tech}
-                    value={tech}
-                    className="hover:bg-blue-50/80 focus:bg-blue-100/80 transition-colors"
-                  >
-                    {tech}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SafeSelect
+              value={selectedTech}
+              onValueChange={setSelectedTech}
+              placeholder="💻 Selecione uma tecnologia"
+              triggerClassName="relative h-11 border-2 border-blue-200/50 focus:border-blue-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300"
+              contentClassName="bg-white/95 backdrop-blur-xl border-blue-200/50 shadow-xl"
+            >
+              {technologies.map((tech) => (
+                <SelectItem
+                  key={tech}
+                  value={tech}
+                  className="hover:bg-blue-50/80 focus:bg-blue-100/80 transition-colors"
+                >
+                  {tech}
+                </SelectItem>
+              ))}
+            </SafeSelect>
           </div>
         </div>
 
@@ -152,25 +165,23 @@ const JobFilters = ({
           </label>
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg blur opacity-20 group-hover:opacity-40 transition-all duration-300"></div>
-            <Select
+            <SafeSelect
               value={selectedModality}
               onValueChange={setSelectedModality}
+              placeholder="🏠 Selecione uma modalidade"
+              triggerClassName="relative h-11 border-2 border-purple-200/50 focus:border-purple-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300"
+              contentClassName="bg-white/95 backdrop-blur-xl border-purple-200/50 shadow-xl"
             >
-              <SelectTrigger className="relative h-11 border-2 border-purple-200/50 focus:border-purple-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300">
-                <SelectValue placeholder="🏠 Selecione uma modalidade" />
-              </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-xl border-purple-200/50 shadow-xl">
-                {modalities.map((modality) => (
-                  <SelectItem
-                    key={modality}
-                    value={modality}
-                    className="hover:bg-purple-50/80 focus:bg-purple-100/80 transition-colors"
-                  >
-                    {modality}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {modalities.map((modality) => (
+                <SelectItem
+                  key={modality}
+                  value={modality}
+                  className="hover:bg-purple-50/80 focus:bg-purple-100/80 transition-colors"
+                >
+                  {modality}
+                </SelectItem>
+              ))}
+            </SafeSelect>
           </div>
         </div>
 
@@ -184,22 +195,23 @@ const JobFilters = ({
           </label>
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg blur opacity-20 group-hover:opacity-40 transition-all duration-300"></div>
-            <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-              <SelectTrigger className="relative h-11 border-2 border-orange-200/50 focus:border-orange-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300">
-                <SelectValue placeholder="📈 Selecione um nível" />
-              </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-xl border-orange-200/50 shadow-xl">
-                {levels.map((level) => (
-                  <SelectItem
-                    key={level}
-                    value={level}
-                    className="hover:bg-orange-50/80 focus:bg-orange-100/80 transition-colors"
-                  >
-                    {level}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SafeSelect
+              value={selectedLevel}
+              onValueChange={setSelectedLevel}
+              placeholder="📈 Selecione um nível"
+              triggerClassName="relative h-11 border-2 border-orange-200/50 focus:border-orange-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300"
+              contentClassName="bg-white/95 backdrop-blur-xl border-orange-200/50 shadow-xl"
+            >
+              {levels.map((level) => (
+                <SelectItem
+                  key={level}
+                  value={level}
+                  className="hover:bg-orange-50/80 focus:bg-orange-100/80 transition-colors"
+                >
+                  {level}
+                </SelectItem>
+              ))}
+            </SafeSelect>
           </div>
         </div>
 
@@ -213,25 +225,23 @@ const JobFilters = ({
           </label>
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg blur opacity-20 group-hover:opacity-40 transition-all duration-300"></div>
-            <Select
+            <SafeSelect
               value={selectedRepository}
               onValueChange={setSelectedRepository}
+              placeholder="📁 Selecione um repositório"
+              triggerClassName="relative h-11 border-2 border-teal-200/50 focus:border-teal-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300"
+              contentClassName="bg-white/95 backdrop-blur-xl border-teal-200/50 shadow-xl"
             >
-              <SelectTrigger className="relative h-11 border-2 border-teal-200/50 focus:border-teal-400 bg-white/90 backdrop-blur-sm rounded-lg hover:shadow-md transition-all duration-300">
-                <SelectValue placeholder="📁 Selecione um repositório" />
-              </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-xl border-teal-200/50 shadow-xl">
-                {repositories.map((repo) => (
-                  <SelectItem
-                    key={repo}
-                    value={repo}
-                    className="hover:bg-teal-50/80 focus:bg-teal-100/80 transition-colors"
-                  >
-                    {repo}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {repositories.map((repo) => (
+                <SelectItem
+                  key={repo}
+                  value={repo}
+                  className="hover:bg-teal-50/80 focus:bg-teal-100/80 transition-colors"
+                >
+                  {repo}
+                </SelectItem>
+              ))}
+            </SafeSelect>
           </div>
         </div>
 
@@ -296,4 +306,4 @@ const JobFilters = ({
   );
 };
 
-export default JobFilters;
+export default memo(JobFilters);
