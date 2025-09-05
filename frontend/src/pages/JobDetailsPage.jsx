@@ -37,21 +37,28 @@ const JobDetailsPage = () => {
     const fetchJob = async () => {
       try {
         setLoading(true);
+        setError(null);
+        console.log("Buscando vaga com ID da URL:", id);
+
         const jobData = await jobsApi.getJobById(id);
+        console.log("Dados da vaga recebidos:", jobData);
+
         if (jobData) {
           setJob(jobData);
         } else {
           setError("Vaga não encontrada");
         }
       } catch (err) {
-        setError("Erro ao carregar a vaga");
-        console.error("Erro ao buscar vaga:", err);
+        console.error("Erro completo ao buscar vaga:", err);
+        setError("Vaga não encontrada");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchJob();
+    if (id) {
+      fetchJob();
+    }
   }, [id]);
 
   if (loading) {
@@ -95,8 +102,18 @@ const JobDetailsPage = () => {
   }
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR");
+    if (!dateString) return "Data não informada";
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "Data inválida";
+      }
+      return date.toLocaleDateString("pt-BR");
+    } catch (error) {
+      console.error("Erro ao formatar data:", error);
+      return "Data inválida";
+    }
   };
 
   const getModalityFromLabels = (labels) => {
@@ -234,24 +251,28 @@ const JobDetailsPage = () => {
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
-                  {job.title}
+                  {job.title || "Título não informado"}
                 </CardTitle>
                 <div className="flex items-center gap-2 text-sm">
-                  <img
-                    src={
-                      job.repository?.organization?.avatar_url ||
-                      job.user?.avatar_url
-                    }
-                    alt="Company Logo"
-                    className="w-8 h-8 rounded-full bg-gray-200"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
-                  />
+                  {(job.repository?.organization?.avatar_url ||
+                    job.user?.avatar_url) && (
+                    <img
+                      src={
+                        job.repository?.organization?.avatar_url ||
+                        job.user?.avatar_url
+                      }
+                      alt="Company Logo"
+                      className="w-8 h-8 rounded-full bg-gray-200"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                      }}
+                    />
+                  )}
                   <span className="text-emerald-600 font-medium text-lg">
                     {job.repository?.organization?.login ||
                       job.repository?.full_name ||
-                      "Empresa"}
+                      job.user?.login ||
+                      "Empresa não informada"}
                   </span>
                 </div>
               </div>
@@ -294,20 +315,24 @@ const JobDetailsPage = () => {
                 <Calendar className="h-4 w-4 mr-1" />
                 Publicada em {formatDate(job.created_at)}
               </div>
-              {job.comments > 0 && (
+              {job.comments && job.comments > 0 && (
                 <div className="flex items-center">
                   <MessageCircle className="h-4 w-4 mr-1" />
                   {job.comments} comentários
                 </div>
               )}
-              <div className="flex items-center">
-                <Github className="h-4 w-4 mr-1" />
-                {job.repository?.name}
-              </div>
-              <div className="flex items-center">
-                <User className="h-4 w-4 mr-1" />
-                Por {job.user?.login}
-              </div>
+              {job.repository?.name && (
+                <div className="flex items-center">
+                  <Github className="h-4 w-4 mr-1" />
+                  {job.repository.name}
+                </div>
+              )}
+              {job.user?.login && (
+                <div className="flex items-center">
+                  <User className="h-4 w-4 mr-1" />
+                  Por {job.user.login}
+                </div>
+              )}
             </div>
           </CardHeader>
 

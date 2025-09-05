@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -17,6 +18,13 @@ import {
 } from "lucide-react";
 
 const JobCard = ({ job }) => {
+  // Log temporário para debug
+  console.log("Job structure:", {
+    id: job.id,
+    number: job.number,
+    title: job.title?.substring(0, 30) + "...",
+  });
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR");
@@ -195,12 +203,7 @@ const JobCard = ({ job }) => {
             <span className="ml-2 text-gray-400">#{job.number}</span>
           </div>
 
-          <a
-            href={job.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block"
-          >
+          <Link to={`/job/${job.number}`} className="inline-block">
             <Button
               size="sm"
               className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-1"
@@ -208,7 +211,7 @@ const JobCard = ({ job }) => {
               <ExternalLink className="h-3 w-3" />
               Ver vaga
             </Button>
-          </a>
+          </Link>
         </div>
       </CardContent>
     </Card>

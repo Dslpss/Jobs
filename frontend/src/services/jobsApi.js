@@ -15,6 +15,10 @@ export const jobsApi = {
       let response = await api.get("/issues", { params });
       let allJobs = [...response.data];
 
+      // Log para verificar a estrutura dos dados
+      console.log("Estrutura da primeira vaga:", allJobs[0]);
+      console.log("Campos disponíveis:", Object.keys(allJobs[0] || {}));
+
       // Verificar se há mais páginas (comum em APIs REST)
       // Tentar buscar com parâmetros de paginação
       const paginationParams = [
@@ -110,6 +114,60 @@ export const jobsApi = {
       );
     } catch (error) {
       console.error("Erro ao filtrar vagas por nível:", error);
+      throw error;
+    }
+  },
+
+  // Buscar vaga por ID
+  async getJobById(id) {
+    try {
+      console.log("Buscando vaga com ID:", id);
+
+      // A API sempre retorna um array, mesmo para busca específica
+      // Vamos buscar todas e filtrar pelo número ou ID
+      const allJobsResponse = await api.get("/issues");
+      console.log("Total de vagas disponíveis:", allJobsResponse.data.length);
+
+      const job = allJobsResponse.data.find((job) => {
+        const match = job.number === parseInt(id) || job.id === parseInt(id);
+        if (match) {
+          console.log(
+            "Vaga encontrada:",
+            job.title,
+            "- Number:",
+            job.number,
+            "- ID:",
+            job.id
+          );
+          console.log("Estrutura da vaga encontrada:", {
+            id: job.id,
+            number: job.number,
+            title: job.title,
+            created_at: job.created_at,
+            user: job.user?.login,
+            repository: job.repository?.full_name,
+            url: job.url,
+            body: job.body ? "Tem descrição" : "Sem descrição",
+          });
+        }
+        return match;
+      });
+
+      if (!job) {
+        console.log("Nenhuma vaga encontrada com ID/number:", id);
+        // Vamos mostrar alguns exemplos de IDs disponíveis
+        const examples = allJobsResponse.data.slice(0, 3).map((j) => ({
+          id: j.id,
+          number: j.number,
+          title: j.title?.substring(0, 50) + "...",
+        }));
+        console.log("Exemplos de vagas disponíveis:", examples);
+        throw new Error("Vaga não encontrada");
+      }
+
+      return job;
+    } catch (error) {
+      console.error("Erro ao buscar vaga por ID:", error);
       throw error;
     }
   },
