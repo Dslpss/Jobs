@@ -33,8 +33,8 @@ const UpdateNotification = () => {
   if (!showNotification) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-right duration-500">
-      <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg shadow-2xl p-4 max-w-sm border border-emerald-400/30">
+    <div className="fixed bottom-4 right-4 sm:right-4 left-4 sm:left-auto z-50 animate-in slide-in-from-right duration-500">
+      <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg shadow-2xl p-4 w-full sm:max-w-sm border border-emerald-400/30">
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2">
@@ -57,7 +57,7 @@ const UpdateNotification = () => {
           <p className="text-sm text-emerald-50">
             ✨ Novas correções e melhorias foram implementadas!
           </p>
-          
+
           <div className="text-xs text-emerald-100 space-y-1">
             <div className="flex items-center space-x-1">
               <CheckCircle className="h-3 w-3" />
@@ -94,12 +94,13 @@ const UpdateNotification = () => {
         {/* Timestamp */}
         <div className="mt-3 pt-2 border-t border-emerald-400/30">
           <p className="text-xs text-emerald-100 opacity-75">
-            Atualizado em: {new Date(lastUpdateTime).toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
+            Atualizado em:{" "}
+            {new Date(lastUpdateTime).toLocaleString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           </p>
         </div>

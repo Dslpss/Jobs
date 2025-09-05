@@ -155,11 +155,14 @@ const Footer = () => {
                 </span>
                 <span className="flex items-center space-x-1">
                   <div className="h-2 w-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                  <span>Atualizado: {new Date().toLocaleDateString('pt-BR', { 
-                    day: '2-digit', 
-                    month: '2-digit', 
-                    year: 'numeric' 
-                  })}</span>
+                  <span>
+                    Atualizado:{" "}
+                    {new Date().toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
+                  </span>
                 </span>
               </div>
             </div>
