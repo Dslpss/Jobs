@@ -12,6 +12,7 @@ import { EnhancedLoader } from "../components/LoadingComponents";
 import { ErrorState } from "../components/FeedbackComponents";
 import { useFeedback } from "../hooks/useFeedback";
 import { jobsApi } from "../services/jobsApi";
+import { useToast } from "../hooks/use-toast";
 import {
   Calendar,
   Building,
@@ -67,6 +68,8 @@ const JobDetailsPage = () => {
   const handleRetry = () => {
     window.location.reload();
   };
+
+  const { toast } = useToast();
 
   if (feedback.isLoading) {
     return (
