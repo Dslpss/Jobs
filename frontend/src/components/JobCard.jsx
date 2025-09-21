@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import FavoriteButton from "./FavoriteButton";
 import {
   MapPin,
   Calendar,
@@ -180,6 +181,7 @@ const JobCard = ({ job }) => {
                 </div>
               </div>
             </div>
+            <FavoriteButton job={job} size="sm" variant="ghost" />
 
             {/* Premium badges */}
             <div className="flex flex-col gap-2 items-end">

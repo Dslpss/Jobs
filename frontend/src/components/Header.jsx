@@ -11,6 +11,7 @@ import {
   Star,
   Menu,
   X,
+  Heart,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -83,6 +84,36 @@ const Header = () => {
               >
                 <Sparkles className="h-4 w-4 mr-2" />
                 Vagas
+              </Button>
+            </Link>
+
+            <Link to="/favorites">
+              <Button
+                variant={
+                  location.pathname === "/favorites" ? "default" : "ghost"
+                }
+                className={
+                  location.pathname === "/favorites"
+                    ? "bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-300 font-semibold"
+                    : "hover:bg-red-50 hover:text-red-700 transition-all duration-300 font-medium"
+                }
+              >
+                <Heart className="h-4 w-4 mr-2" />
+                Favoritos
+              </Button>
+            </Link>
+
+            <Link to="/profile">
+              <Button
+                variant={location.pathname === "/profile" ? "default" : "ghost"}
+                className={
+                  location.pathname === "/profile"
+                    ? "bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transform hover:scale-105 transition-all duration-300 font-semibold"
+                    : "hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 font-medium"
+                }
+              >
+                <User className="h-4 w-4 mr-2" />
+                Perfil
               </Button>
             </Link>
 
@@ -204,11 +235,13 @@ const Header = () => {
             <div className="max-w-7xl mx-auto px-4 py-4 space-y-3">
               {/* Mobile Vagas Link */}
               <Link to="/" onClick={() => setShowMobileMenu(false)}>
-                <div className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
-                  location.pathname === "/" 
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg" 
-                    : "hover:bg-emerald-50 text-emerald-700"
-                }`}>
+                <div
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
+                    location.pathname === "/"
+                      ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg"
+                      : "hover:bg-emerald-50 text-emerald-700"
+                  }`}
+                >
                   <Sparkles className="h-5 w-5" />
                   <span className="font-medium">Vagas</span>
                 </div>
@@ -219,11 +252,13 @@ const Header = () => {
                   {/* Mobile Admin Link */}
                   {user?.isAdmin && (
                     <Link to="/admin" onClick={() => setShowMobileMenu(false)}>
-                      <div className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
-                        location.pathname === "/admin" 
-                          ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg" 
-                          : "hover:bg-orange-50 text-orange-700"
-                      }`}>
+                      <div
+                        className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
+                          location.pathname === "/admin"
+                            ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
+                            : "hover:bg-orange-50 text-orange-700"
+                        }`}
+                      >
                         <Settings className="h-5 w-5" />
                         <span className="font-medium">Admin</span>
                         <Star className="h-4 w-4 text-yellow-400" />
@@ -241,7 +276,9 @@ const Header = () => {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-900">
-                          {user?.email?.split("@")[0] || user?.name || "Usuário"}
+                          {user?.email?.split("@")[0] ||
+                            user?.name ||
+                            "Usuário"}
                         </p>
                         <p className="text-xs text-emerald-600 flex items-center">
                           <Star className="h-3 w-3 mr-1 fill-current" />

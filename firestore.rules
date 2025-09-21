@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Função auxiliar para verificar autenticação
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Função para verificar se é admin
+    function isAdmin() {
+      return isAuthenticated() &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Coleção de usuários
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Coleção de administradores - apenas leitura para usuários autenticados verificarem se são admin
+    match /admins/{adminId} {
+      allow read: if isAuthenticated() && request.auth.uid == adminId;
+      allow write: if isAdmin(); // Apenas outros admins podem modificar
+    }
+
+    // Coleção de favoritos - usuários podem gerenciar apenas seus próprios favoritos
+    match /favorites/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Coleção de perfis de usuário - usuários podem gerenciar apenas seu próprio perfil
+    match /userProfiles/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Coleção de cálculos
+    match /usuarios/{userId}/calculos/{calculoId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Coleção de consumos
+    match /usuarios/{userId}/consumos/{consumoId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Coleção system_info (pública somente para leitura)
+    match /system_info/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Coleção de testes (temporária)
+    match /connection_test/{docId} {
+      allow write: if isAuthenticated();
+      allow read: if false;
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import FavoriteButton from "../components/FavoriteButton";
 import {
   Card,
   CardContent,
@@ -13,6 +14,7 @@ import { ErrorState } from "../components/FeedbackComponents";
 import { useFeedback } from "../hooks/useFeedback";
 import { jobsApi } from "../services/jobsApi";
 import { useToast } from "../hooks/use-toast";
+import { useUserProfile } from "../contexts/UserProfileContext";
 import {
   Calendar,
   Building,
@@ -32,6 +34,7 @@ const JobDetailsPage = () => {
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const feedback = useFeedback();
+  const { addViewedJob } = useUserProfile();
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -57,6 +60,8 @@ const JobDetailsPage = () => {
         .then((data) => {
           if (data) {
             setJob(data);
+            // Adicionar ao histórico de vagas visualizadas
+            addViewedJob(data);
           }
         })
         .catch(() => {
@@ -325,9 +330,12 @@ const JobDetailsPage = () => {
           <CardHeader className="pb-4">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
-                  {job.title || "Título não informado"}
-                </CardTitle>
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle className="text-2xl font-bold text-gray-900">
+                    {job.title || "Título não informado"}
+                  </CardTitle>
+                  <FavoriteButton job={job} size="sm" variant="ghost" />
+                </div>
                 <div className="flex items-center gap-2 text-sm">
                   {(job.repository?.organization?.avatar_url ||
                     job.user?.avatar_url) && (
